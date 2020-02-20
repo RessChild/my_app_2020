@@ -12,4 +12,4 @@ React JS Funtamentals Course
 1. git remote add origin 연동시킬_URL
 2. git add .
 3. git commit -m "원하는 내용"
-4. git push -u origin master
+4. git push origin master

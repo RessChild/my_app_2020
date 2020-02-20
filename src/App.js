@@ -1,62 +1,56 @@
 import React from 'react';
+import axios from "axios";
+import Movie from "./Movie";
 import Proptypes from"prop-types";
 
-const foodILike = [
-  {
-    id:1,
-    name:"kimchi",
-    pic:"https://pds.joins.com/news/component/htmlphoto_mmdata/201910/01/htm_20191001205346742941.jpg",
-    rating:5,
-  },{
-    id:2,
-    name:"ramen",
-    pic:"https://pds.joins.com/news/component/htmlphoto_mmdata/201910/01/htm_20191001205346742941.jpg",
-    rating:4.8,
-  },{
-    id:3,
-    name:"삼겹살",
-    pic:"https://pds.joins.com/news/component/htmlphoto_mmdata/201910/01/htm_20191001205346742941.jpg",
-    rating:3.6,
-  }]
+class App extends React.Component{
+  // 객체화 시킨 이상, 일반적인 함수처럼 return이 있는게 아님
+  state = {
+    isLoading : true,
+    movies : [],
+  }
 
-function renderFood(dish){
-  return <Food
-           key={dish.id} 
-           favorite={dish.name} 
-           pic={dish.pic} 
-           rating={dish.rating}
-          />
-}
+  getMovies = async () =>{
+     // 해당 주소로부터 json 파일을 받아옴 (fetch 와 동일)
+    // 다만, 받아오는 시간이 느릴 수 있으니 대기함을 알려줘야함
+    // async 명령을 통해 비동기화 시킴 (기다려야한다)
+    // await 는 대기할 함수를 정의시킴
+    const {data:{data:{movies}}} = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
 
-  // 함수를 따로 짜서 선언해도 상관없고\
-  // 람다형식으로 짜도 OK
-  // 입력명 => ( 함수 내용 )
+    console.log(movies);
+    // react 의 경우, 전체를 받아와서 내부 원소를 호출하는 형식 외에
+    // 데이터 구조를 순차적으로 작성하여 직접 접근하는 방식도 가능
 
-// component 호출 함수는 무조건 대문자로 시작해야함
-function Food( { favorite, pic, rating } ){ // props.fav 랑 동일
-  console.log({rating})
-  return (
-    <div>
-      <h1>i like {favorite} </h1>
-      <h4>{rating}/5.0 </h4>
-      <img src={pic} alt={favorite}/>
-    </div>
-  );
-}
+    this.setState({ movies, isLoading: false });
+    // state 명과 변수명이 동일한 경우, 알아서 처리해줌
+    }
+  
+  componentDidMount(){
+    this.getMovies();
+    /*
+    setTimeout(()=>{
+      this.setState({isLoading : false});
+    }, 6000)
+    */
+  }
 
-Food.propTypes = {
-  name:Proptypes.string.isRequired,
-  picture: Proptypes.string.isRequired,
-  rating: Proptypes.number
-}; // 인자전달 오류찾는 방법
-// isRequired 가 없으면 필수는 아님 
-
-function App() {
-  return (
-    <div className="App">
-      {foodILike.map(renderFood)}
-    </div>
-  );
+  render(){
+    const { isLoading, movies } = this.state
+    return (
+      <div>
+          {isLoading ? "Loading..." : movies.map(movie => (
+            <Movie
+              key={movie.id}
+              id={movie.id}
+              year={movie.year}
+              title={movie.title}
+              summary={movie.summary}
+              poster={movie.medium_cover_image}
+            />
+          ))}
+     </div>
+    )}
+    // react 는 기본적으로 모든 class 에 있는 render 함수를 실행시키려함
 }
 
 export default App;
