@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import Movie from "./Movie";
+import "./App.css"
 import Proptypes from"prop-types";
 
 class App extends React.Component{
@@ -10,7 +11,7 @@ class App extends React.Component{
     movies : [],
   }
 
-  getMovies = async () =>{
+  getMovies = async () => {
      // 해당 주소로부터 json 파일을 받아옴 (fetch 와 동일)
     // 다만, 받아오는 시간이 느릴 수 있으니 대기함을 알려줘야함
     // async 명령을 통해 비동기화 시킴 (기다려야한다)
@@ -25,7 +26,7 @@ class App extends React.Component{
     // state 명과 변수명이 동일한 경우, 알아서 처리해줌
     }
   
-  componentDidMount(){
+  componentDidMount() {
     this.getMovies();
     /*
     setTimeout(()=>{
@@ -35,22 +36,34 @@ class App extends React.Component{
   }
 
   render(){
-    const { isLoading, movies } = this.state
+    const { isLoading, movies } = this.state;
     return (
-      <div>
-          {isLoading ? "Loading..." : movies.map(movie => (
-            <Movie
-              key={movie.id}
-              id={movie.id}
-              year={movie.year}
-              title={movie.title}
-              summary={movie.summary}
-              poster={movie.medium_cover_image}
-            />
-          ))}
-     </div>
-    )}
+      // HTML 처럼 보여도, 자바스크립트
+      // so, class 대신 className 을 사용해줘야 함
+      <section className="container">
+        {isLoading ? ( 
+          <div className="loader">
+            <span className="loader_text">Loading...</span>
+          </div>
+        ) : (
+          <div className="movies">
+            { movies.map(movie => (
+              <Movie
+                key={movie.id}
+                id={movie.id}
+                year={movie.year}
+                title={movie.title}
+                summary={movie.summary}
+                poster={movie.medium_cover_image}
+                genres={movie.genres}
+              />
+            ))}
+          </div>
+          )}
+      </section>
+    )
     // react 는 기본적으로 모든 class 에 있는 render 함수를 실행시키려함
+  }
 }
 
 export default App;

@@ -13,3 +13,12 @@ React JS Funtamentals Course
 2. git add .
 3. git commit -m "원하는 내용"
 4. git push origin master
+
+# 웹사이트와 깃허브 연동
+1. npm i gh-pages
+2. package.JSON 의 homepage 추가
+    "homepage": "http://resschild.github.io/my_app_2020/"
+3. script 에 
+    "deploy": "gh-pages -d build" ,
+    "predeploy": "npm run build" 추가
+4. npm run deploy 실행
