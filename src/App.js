@@ -1,69 +1,25 @@
 import React from 'react';
-import axios from "axios";
-import Movie from "./Movie";
-import "./App.css"
-import Proptypes from"prop-types";
+import { HashRouter, Route } from "react-router-dom";
+import About from "./routes/About";
+import Home from "./routes/Home";
+import Navigation from "./components/Navigation";
+import Detail from "./routes/Detail";
 
-class App extends React.Component{
-  // 객체화 시킨 이상, 일반적인 함수처럼 return이 있는게 아님
-  state = {
-    isLoading : true,
-    movies : [],
-  }
-
-  getMovies = async () => {
-     // 해당 주소로부터 json 파일을 받아옴 (fetch 와 동일)
-    // 다만, 받아오는 시간이 느릴 수 있으니 대기함을 알려줘야함
-    // async 명령을 통해 비동기화 시킴 (기다려야한다)
-    // await 는 대기할 함수를 정의시킴
-    const {data:{data:{movies}}} = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
-
-    console.log(movies);
-    // react 의 경우, 전체를 받아와서 내부 원소를 호출하는 형식 외에
-    // 데이터 구조를 순차적으로 작성하여 직접 접근하는 방식도 가능
-
-    this.setState({ movies, isLoading: false });
-    // state 명과 변수명이 동일한 경우, 알아서 처리해줌
-    }
-  
-  componentDidMount() {
-    this.getMovies();
-    /*
-    setTimeout(()=>{
-      this.setState({isLoading : false});
-    }, 6000)
-    */
-  }
-
-  render(){
-    const { isLoading, movies } = this.state;
-    return (
-      // HTML 처럼 보여도, 자바스크립트
-      // so, class 대신 className 을 사용해줘야 함
-      <section className="container">
-        {isLoading ? ( 
-          <div className="loader">
-            <span className="loader_text">Loading...</span>
-          </div>
-        ) : (
-          <div className="movies">
-            { movies.map(movie => (
-              <Movie
-                key={movie.id}
-                id={movie.id}
-                year={movie.year}
-                title={movie.title}
-                summary={movie.summary}
-                poster={movie.medium_cover_image}
-                genres={movie.genres}
-              />
-            ))}
-          </div>
-          )}
-      </section>
-    )
-    // react 는 기본적으로 모든 class 에 있는 render 함수를 실행시키려함
-  }
+function App(){
+  // Router 는 기본적으로 모든 놈들과 매칭을 시도
+  // 일치하는 경우 전부 호출하므로,
+  // exact 로 완벽 일치시에만 작동하도록 변경
+  return (
+    <HashRouter>
+      <Navigation></Navigation>
+      <Route path="/" exact={true} component={ Home } />
+      <Route path="/about" component={ About } />
+      <Route path="/movie/:id" component={ Detail } />
+    </HashRouter>
+  );
 }
+// router 란 사용자의 경로에 따라 보여줄 js 를 판단
+// 또한 router 는 기본적으로 넘겨주는 props 가 존재
+// :id = 변수 id 값이 들어감을 의미
 
 export default App;
